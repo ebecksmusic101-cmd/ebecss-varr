@@ -1,0 +1,8 @@
+{
+  "name": "ebecks-var",
+  "version": "1.0.0",
+  "description": "Ebecks VAR — Professional Football Analysis Engine",
+  "dependencies": {
+    "node-fetch": "^2.6.9"
+  }
+}

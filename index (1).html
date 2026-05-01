@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ebecks VAR</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ebecks VAR">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230a0a0a'/%3E%3Ccircle cx='256' cy='210' r='130' fill='none' stroke='%23c8f135' stroke-width='18'/%3E%3Cpath d='M256 80 L282 160 L366 160 L300 208 L324 290 L256 242 L188 290 L212 208 L146 160 L230 160 Z' fill='%23c8f135'/%3E%3Ctext x='256' y='480' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' fill='%23c8f135' text-anchor='middle' letter-spacing='4'%3EVAR%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230a0a0a'/%3E%3Ccircle cx='256' cy='210' r='130' fill='none' stroke='%23c8f135' stroke-width='18'/%3E%3Cpath d='M256 80 L282 160 L366 160 L300 208 L324 290 L256 242 L188 290 L212 208 L146 160 L230 160 Z' fill='%23c8f135'/%3E%3Ctext x='256' y='480' font-family='Arial Black,sans-serif' font-size='52' font-weight='900' fill='%23c8f135' text-anchor='middle' letter-spacing='4'%3EVAR%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--s:#111;--s2:#1a1a1a;--b:#222;--g:#c8f135;--y:#f1b135;--r:#f13535;--t:#f0f0f0;--m:#666;--m2:#444;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--t);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:60px;}
+header{border-bottom:1px solid var(--b);padding:14px 18px;display:flex;align-items:center;position:sticky;top:0;background:rgba(10,10,10,.97);backdrop-filter:blur(12px);z-index:200;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;color:var(--g);}
+.logo sub{color:var(--m);font-size:10px;font-family:'DM Mono',monospace;letter-spacing:1px;margin-left:8px;vertical-align:middle;}
+.live-pill{margin-left:auto;background:rgba(200,241,53,.08);color:var(--g);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;padding:3px 10px;border-radius:100px;border:1px solid rgba(200,241,53,.2);}
+.wrap{max-width:740px;margin:0 auto;padding:22px 14px;}
+.card{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:18px;margin-bottom:12px;}
+.flabel{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--m);text-transform:uppercase;margin-bottom:6px;display:block;}
+.teams-row{display:grid;grid-template-columns:1fr 28px 1fr;gap:8px;align-items:center;margin-bottom:14px;}
+.tinput{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:12px 14px;color:var(--t);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;width:100%;outline:none;transition:border-color .2s;}
+.tinput:focus{border-color:var(--g);}
+.tinput::placeholder{color:var(--m2);font-size:18px;}
+.vs{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--m);text-align:center;}
+.det-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.det-name{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;color:var(--g);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.det-name.empty{color:var(--m2);font-size:13px;font-family:'DM Sans',sans-serif;letter-spacing:0;font-weight:400;}
+.cbadge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 9px;border-radius:100px;white-space:nowrap;}
+.cbadge.ok{background:rgba(200,241,53,.1);color:var(--g);border:1px solid rgba(200,241,53,.2);}
+.cbadge.est{background:rgba(241,177,53,.1);color:var(--y);border:1px solid rgba(241,177,53,.2);}
+.manbtn{background:none;border:none;color:var(--m);font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;text-decoration:underline;}
+.lsel{width:100%;background:var(--s2);border:1px solid var(--b);color:var(--t);padding:11px 13px;border-radius:9px;font-size:14px;outline:none;cursor:pointer;margin-top:10px;display:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath fill='%23666' d='M6 8 1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;}
+.lsel option,.lsel optgroup{background:var(--s2);color:var(--t);}
+.run-btn{width:100%;background:var(--g);color:#000;border:none;border-radius:12px;padding:16px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;cursor:pointer;transition:all .2s;margin-bottom:24px;}
+.run-btn:hover:not(:disabled){background:#d4ff40;transform:translateY(-1px);}
+.run-btn:disabled{background:var(--m2);color:var(--m);cursor:not-allowed;transform:none;}
+.load-box{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:18px;display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.spinner{width:18px;height:18px;border:2px solid var(--b);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lstep{font-family:'DM Mono',monospace;font-size:11px;color:var(--g);letter-spacing:1px;}
+.lsub{font-size:12px;color:var(--m);margin-top:3px;animation:fade 1.5s ease-in-out infinite;}
+@keyframes fade{0%,100%{opacity:.4}50%{opacity:1}}
+#results{display:none;}
+#results.show{display:block;}
+.slabel{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--m);text-transform:uppercase;margin-bottom:10px;}
+.verdict-hero{border-radius:14px;padding:24px;margin-bottom:16px;text-align:center;border:1px solid var(--b);position:relative;overflow:hidden;}
+.verdict-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.verdict-hero.strong{background:rgba(200,241,53,.06);border-color:rgba(200,241,53,.3);}
+.verdict-hero.strong::before{background:var(--g);}
+.verdict-hero.mixed{background:rgba(241,177,53,.06);border-color:rgba(241,177,53,.3);}
+.verdict-hero.mixed::before{background:var(--y);}
+.verdict-hero.weak{background:rgba(241,53,53,.06);border-color:rgba(241,53,53,.3);}
+.verdict-hero.weak::before{background:var(--r);}
+.vh-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--m);margin-bottom:8px;}
+.vh-sig{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:4px;line-height:1;margin-bottom:6px;}
+.verdict-hero.strong .vh-sig{color:var(--g);}
+.verdict-hero.mixed .vh-sig{color:var(--y);}
+.verdict-hero.weak .vh-sig{color:var(--r);}
+.vh-draw{font-family:'DM Mono',monospace;font-size:11px;padding:4px 14px;border-radius:100px;display:inline-block;margin-bottom:10px;}
+.vh-draw.low{background:rgba(200,241,53,.12);color:var(--g);}
+.vh-draw.high{background:rgba(241,53,53,.12);color:var(--r);}
+.vh-sum{color:#999;font-size:14px;line-height:1.7;max-width:440px;margin:0 auto;}
+.pred-box{border-radius:14px;padding:20px;margin-bottom:16px;background:rgba(200,241,53,.05);border:1px solid rgba(200,241,53,.2);position:relative;overflow:hidden;}
+.pred-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),var(--y));}
+.score-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px;}
+.score-team{text-align:center;flex:1;}
+.score-tname{font-family:'DM Mono',monospace;font-size:10px;color:var(--m);margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.score-num{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--g);line-height:1;}
+.score-dash{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--m2);}
+.score-note{font-family:'DM Mono',monospace;font-size:10px;color:var(--m);text-align:center;letter-spacing:1px;margin-bottom:12px;}
+.pred-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.pred-pill{background:rgba(0,0,0,.3);border-radius:9px;padding:10px 12px;flex:1;min-width:100px;text-align:center;}
+.pill-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--m);margin-bottom:4px;}
+.pill-val{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:1px;}
+.pill-val.g{color:var(--g);}
+.pill-val.y{color:var(--y);}
+.pill-val.r{color:var(--r);}
+.pill-conf{font-family:'DM Mono',monospace;font-size:9px;color:var(--m);margin-top:2px;}
+.best-bet-box{background:rgba(200,241,53,.07);border:1px solid rgba(200,241,53,.15);border-radius:10px;padding:12px;margin-bottom:8px;}
+.avoid-box{background:rgba(241,53,53,.05);border:1px solid rgba(241,53,53,.15);border-radius:10px;padding:12px;}
+.bbox-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;margin-bottom:5px;}
+.bbox-lbl.g{color:var(--g);}
+.bbox-lbl.r{color:var(--r);}
+.bbox-txt{font-size:13px;color:var(--t);line-height:1.6;}
+.story-card{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden;}
+.story-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g),var(--y));}
+.story-sub{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--m);margin-bottom:6px;}
+.story-team{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--g);margin-bottom:6px;line-height:1;}
+.story-txt{color:#aaa;font-size:14px;line-height:1.65;}
+.motiv-badge{display:inline-block;margin-top:10px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;padding:4px 12px;border-radius:100px;}
+.motiv-badge.backed{background:rgba(200,241,53,.12);color:var(--g);border:1px solid rgba(200,241,53,.2);}
+.motiv-badge.notbacked{background:rgba(241,53,53,.12);color:var(--r);border:1px solid rgba(241,53,53,.2);}
+.form-card{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:18px;margin-bottom:16px;}
+.form-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--t);margin-bottom:12px;}
+.form-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05);}
+.form-row:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.form-team-name{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--m);width:56px;flex-shrink:0;padding-top:3px;}
+.form-right{flex:1;}
+.form-results{display:flex;gap:5px;margin-bottom:5px;flex-wrap:wrap;}
+.fball{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;flex-shrink:0;}
+.fball.W{background:rgba(200,241,53,.2);color:var(--g);border:1px solid rgba(200,241,53,.3);}
+.fball.D{background:rgba(241,177,53,.2);color:var(--y);border:1px solid rgba(241,177,53,.3);}
+.fball.L{background:rgba(241,53,53,.2);color:var(--r);border:1px solid rgba(241,53,53,.3);}
+.form-trend{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;}
+.form-trend.improving{color:var(--g);}
+.form-trend.declining{color:var(--r);}
+.form-trend.unstable{color:var(--y);}
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.sig-card{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:14px;}
+.sig-card.pass{border-color:rgba(200,241,53,.4);}
+.sig-card.fail{border-color:rgba(241,53,53,.3);}
+.sig-head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:6px;}
+.sig-name{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--m);text-transform:uppercase;line-height:1.4;}
+.sig-badge{font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:100px;white-space:nowrap;flex-shrink:0;}
+.sig-badge.pass{background:rgba(200,241,53,.12);color:var(--g);}
+.sig-badge.fail{background:rgba(241,53,53,.12);color:var(--r);}
+.sig-detail{font-size:13px;color:var(--t);line-height:1.5;}
+.share-section{background:var(--s);border:1px solid var(--b);border-radius:14px;padding:18px;margin-bottom:16px;}
+.share-title{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;color:var(--t);margin-bottom:12px;}
+.share-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.sbtn{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;transition:all .2s;}
+.sbtn:hover{transform:translateY(-1px);}
+.sbtn.wa{background:#25D366;color:#fff;}
+.sbtn.em{background:var(--s2);color:var(--t);border:1px solid var(--b);}
+.sbtn.em:hover{border-color:var(--g);color:var(--g);}
+.sbtn.cp{background:var(--s2);color:var(--t);border:1px solid var(--b);}
+.sbtn.cp:hover{border-color:var(--g);color:var(--g);}
+.sbtn.na{background:var(--g);color:#000;}
+.share-link-row{display:flex;gap:8px;align-items:center;}
+.share-link-box{flex:1;background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:9px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--m);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.copy-link-btn{background:var(--g);color:#000;border:none;border-radius:8px;padding:9px 14px;font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;white-space:nowrap;}
+.err-card{background:rgba(241,53,53,.06);border:1px solid rgba(241,53,53,.3);border-radius:12px;padding:20px;color:#f08080;font-size:14px;line-height:1.7;margin-bottom:12px;}
+.err-card strong{display:block;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;color:var(--r);margin-bottom:6px;}
+.gbtn{background:none;border:1px solid var(--b);color:var(--m);padding:10px 18px;border-radius:8px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all .15s;}
+.gbtn:hover{border-color:var(--m);color:var(--t);}
+.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.toast{display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--g);color:#000;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:1px;padding:10px 22px;border-radius:100px;z-index:9999;white-space:nowrap;}
+.toast.show{display:block;animation:tin .3s ease;}
+@keyframes tin{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@media(max-width:520px){
+  .teams-row{grid-template-columns:1fr;}.vs{display:none;}
+  .sig-grid{grid-template-columns:1fr;}
+  .share-buttons{grid-template-columns:1fr 1fr;}
+  .action-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">EBECKS VAR <sub>ANALYSIS ENGINE</sub></div>
+  <div class="live-pill">⚽ APR 2026</div>
+</header>
+
+<div class="wrap">
+  <div class="card">
+    <div class="teams-row">
+      <div>
+        <span class="flabel">Home Team</span>
+        <input class="tinput" id="homeTeam" placeholder="e.g. Arsenal" oninput="onType()">
+      </div>
+      <div class="vs">VS</div>
+      <div>
+        <span class="flabel">Away Team</span>
+        <input class="tinput" id="awayTeam" placeholder="e.g. Chelsea" oninput="onType()">
+      </div>
+    </div>
+    <span class="flabel">League</span>
+    <div class="det-row">
+      <div class="det-name empty" id="detName">Type teams above to auto-detect</div>
+      <div class="cbadge" id="detBadge" style="display:none"></div>
+      <button class="manbtn" onclick="toggleSel()">⚙ Change</button>
+    </div>
+    <select class="lsel" id="leagueSel" onchange="pickLeague(this.value)">
+      <optgroup label="🏆 Elite European">
+        <option value="UEFA Champions League">🏆 UEFA Champions League</option>
+        <option value="UEFA Europa League">🟠 UEFA Europa League</option>
+        <option value="UEFA Conference League">⚪ UEFA Conference League</option>
+      </optgroup>
+      <optgroup label="🏴󠁧󠁢󠁥󠁮󠁧󠁿 England">
+        <option value="Premier League">Premier League</option>
+        <option value="Championship">Championship</option>
+        <option value="League One">League One</option>
+        <option value="League Two">League Two</option>
+      </optgroup>
+      <optgroup label="🇪🇸 Spain"><option value="La Liga">La Liga</option><option value="La Liga 2">La Liga 2</option></optgroup>
+      <optgroup label="🇩🇪 Germany"><option value="Bundesliga">Bundesliga</option><option value="2. Bundesliga">2. Bundesliga</option></optgroup>
+      <optgroup label="🇮🇹 Italy"><option value="Serie A">Serie A</option><option value="Serie B">Serie B</option></optgroup>
+      <optgroup label="🇫🇷 France"><option value="Ligue 1">Ligue 1</option><option value="Ligue 2">Ligue 2</option></optgroup>
+      <optgroup label="🇵🇹 Portugal"><option value="Primeira Liga">Primeira Liga</option></optgroup>
+      <optgroup label="🇳🇱 Netherlands"><option value="Eredivisie">Eredivisie</option></optgroup>
+      <optgroup label="🇧🇪 Belgium"><option value="Belgian Pro League">Belgian Pro League</option></optgroup>
+      <optgroup label="🇹🇷 Turkey"><option value="Süper Lig">Süper Lig</option></optgroup>
+      <optgroup label="🇸🇦 Saudi Arabia"><option value="Saudi Pro League">Saudi Pro League</option></optgroup>
+      <optgroup label="🇺🇸 USA"><option value="MLS">MLS</option></optgroup>
+      <optgroup label="🇲🇽 Mexico"><option value="Liga MX">Liga MX</option></optgroup>
+      <optgroup label="🇧🇷 Brazil"><option value="Brasileirao Serie A">Brasileirão Série A</option></optgroup>
+      <optgroup label="🇦🇷 Argentina"><option value="Argentine Primera Division">Argentine Primera División</option></optgroup>
+      <optgroup label="🌎 CONMEBOL"><option value="Copa Libertadores">Copa Libertadores</option><option value="Copa Sudamericana">Copa Sudamericana</option></optgroup>
+      <optgroup label="🇯🇵 Japan"><option value="J1 League">J1 League</option></optgroup>
+      <optgroup label="🇰🇷 South Korea"><option value="K League 1">K League 1</option></optgroup>
+      <optgroup label="🌍 Africa">
+        <option value="CAF Champions League">CAF Champions League</option>
+        <option value="Egyptian Premier League">Egyptian Premier League</option>
+        <option value="South African Premier Division">South African Premier Division</option>
+        <option value="Nigerian Professional Football League">Nigerian Pro League</option>
+        <option value="Ghanaian Premier League">Ghanaian Premier League</option>
+        <option value="Kenyan Premier League">Kenyan Premier League</option>
+        <option value="Zambian Super League">Zambian Super League</option>
+        <option value="Ugandan Premier League">Ugandan Premier League</option>
+        <option value="Tanzanian Premier League">Tanzanian Premier League</option>
+        <option value="Zimbabwean Premier Soccer League">Zimbabwe PSL</option>
+        <option value="Botola Pro Morocco">Botola Pro</option>
+      </optgroup>
+      <optgroup label="🏆 International">
+        <option value="FIFA World Cup">FIFA World Cup</option>
+        <option value="Africa Cup of Nations">AFCON</option>
+        <option value="Copa America">Copa América</option>
+        <option value="UEFA Euro">UEFA Euro</option>
+        <option value="UEFA Nations League">UEFA Nations League</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <button class="run-btn" id="runBtn" onclick="runAnalysis()">⚽ ANALYSE MATCH</button>
+  <div id="results"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── League map ────────────────────────────────────────────
+const LM=[
+  {l:'Premier League',t:['arsenal','chelsea','liverpool','manchester city','man city','manchester united','man utd','tottenham','spurs','newcastle','aston villa','west ham','brighton','everton','brentford','fulham','wolves','wolverhampton','crystal palace','nottingham forest','leicester','southampton','ipswich','bournemouth','luton']},
+  {l:'La Liga',t:['barcelona','real madrid','atletico madrid','sevilla','villarreal','real sociedad','athletic bilbao','betis','valencia','osasuna','getafe','girona','mallorca','cadiz','las palmas','rayo','celta','espanyol','leganes','valladolid']},
+  {l:'Bundesliga',t:['bayern','dortmund','bvb','leverkusen','frankfurt','rb leipzig','stuttgart','wolfsburg','freiburg','hoffenheim','augsburg','mainz','werder','union berlin','heidenheim','monchengladbach','koln','bochum','st pauli']},
+  {l:'Serie A',t:['juventus','inter','ac milan','napoli','roma','lazio','atalanta','fiorentina','torino','bologna','udinese','lecce','empoli','monza','verona','cagliari','genoa','como','venezia','parma']},
+  {l:'Ligue 1',t:['psg','paris saint-germain','marseille','lyon','monaco','lille','nice','rennes','lens','strasbourg','montpellier','nantes','toulouse','brest','reims','lorient','le havre','auxerre']},
+  {l:'Saudi Pro League',t:['al hilal','al nassr','al ittihad','al ahli','al qadsiah','al shabab','al fateh','al taawoun','al fayha']},
+  {l:'Primeira Liga',t:['benfica','porto','sporting','braga','vitoria','estoril','moreirense','famalicao','boavista','santa clara']},
+  {l:'Eredivisie',t:['ajax','psv','feyenoord','az alkmaar','utrecht','twente','groningen','heerenveen','sparta rotterdam']},
+  {l:'Süper Lig',t:['galatasaray','fenerbahce','besiktas','trabzonspor','istanbul basaksehir','konyaspor']},
+  {l:'MLS',t:['inter miami','la galaxy','seattle','portland','atlanta united','nycfc','red bulls','toronto','vancouver','montreal','chicago fire','columbus','sporting kc','real salt lake','minnesota','cincinnati','austin fc','nashville','charlotte','dallas','lafc','new england','dc united','colorado','houston','orlando','philadelphia']},
+  {l:'Brasileirao Serie A',t:['flamengo','palmeiras','atletico mineiro','fluminense','corinthians','sao paulo','santos','botafogo','gremio','internacional','cruzeiro','bahia','fortaleza','vasco','athletico paranaense']},
+  {l:'Argentine Primera Division',t:['boca juniors','river plate','racing','independiente','san lorenzo','estudiantes','lanus','huracan','velez','talleres','belgrano','rosario central']},
+  {l:'CAF Champions League',t:['zamalek','al ahly','mamelodi sundowns','wydad','tp mazembe','esperance','hearts of oak','enyimba','kaizer chiefs','orlando pirates']},
+  {l:'South African Premier Division',t:['mamelodi sundowns','kaizer chiefs','orlando pirates','supersport','cape town city','stellenbosch','sekhukhune','amazulu','swallows','chippa']},
+  {l:'Ghanaian Premier League',t:['accra hearts','asante kotoko','medeama','aduana','berekum chelsea','ashantigold']},
+  {l:'Nigerian Professional Football League',t:['enyimba','kano pillars','rivers united','rangers','shooting stars','lobi stars','remo stars','nasarawa','plateau united','akwa united']},
+  {l:'Kenyan Premier League',t:['gor mahia','afc leopards','tusker','bandari','kariobangi sharks','sofapaka','ulinzi','nairobi city stars']},
+  {l:'Ugandan Premier League',t:['vipers','kcca','express','sc villa','wakiso giants','bul fc','mbarara','arua hill']},
+  {l:'Tanzanian Premier League',t:['simba','young africans','yanga','azam','mtibwa','namungo','kagera sugar']},
+  {l:'Zambian Super League',t:['zesco','zanaco','nkana','green eagles','power dynamos','buildcon','forest rangers']},
+  {l:'Egyptian Premier League',t:['al ahly','zamalek','pyramids','ismaily','al masry','wadi degla','smouha']},
+  {l:'Liga MX',t:['club america','chivas','guadalajara','cruz azul','pumas','tigres','monterrey','toluca','santos laguna','tijuana','leon','necaxa','atlas','puebla']},
+  {l:'J1 League',t:['gamba osaka','urawa reds','kashima','yokohama','vissel kobe','nagoya','cerezo','sanfrecce','kawasaki']},
+  {l:'K League 1',t:['jeonbuk','ulsan','fc seoul','suwon','pohang','daegu','incheon','gwangju']},
+  {l:'Belgian Pro League',t:['club brugge','anderlecht','gent','standard liege','antwerp','genk','union saint-gilloise']},
+];
+
+let selLeague='',manualMode=false,selOpen=false,lastShareText='',lastHome='',lastAway='';
+
+// ── League detect ─────────────────────────────────────────
+function onType(){if(!manualMode)detect();}
+function detect(){
+  const h=document.getElementById('homeTeam').value.toLowerCase().trim();
+  const a=document.getElementById('awayTeam').value.toLowerCase().trim();
+  if(!h&&!a){setDet('','');return;}
+  let best=null,top=0;
+  for(const e of LM){let sc=0;for(const t of e.t){if(h&&(h.includes(t)||t.includes(h)))sc+=3;if(a&&(a.includes(t)||t.includes(a)))sc+=3;}if(sc>top){top=sc;best=e.l;}}
+  if(best&&top>=3){selLeague=best;setDet(best,top>=6?'ok':'est');}
+  else{selLeague='';setDet('Unknown — select manually','est');document.getElementById('leagueSel').style.display='block';}
+}
+function setDet(name,conf){
+  const el=document.getElementById('detName'),b=document.getElementById('detBadge');
+  if(!name){el.textContent='Type teams above to auto-detect';el.className='det-name empty';b.style.display='none';}
+  else{el.textContent=name;el.className='det-name';if(conf){b.style.display='block';b.textContent=conf==='ok'?'✓ DETECTED':'~ ESTIMATED';b.className='cbadge '+conf;}else b.style.display='none';}
+}
+function toggleSel(){selOpen=!selOpen;document.getElementById('leagueSel').style.display=selOpen?'block':'none';}
+function pickLeague(v){selLeague=v;manualMode=true;setDet(v,'ok');}
+
+// ── API call — frontend sends to OUR backend only ─────────
+// NO API KEY HERE — key lives safely on the server
+async function callBackend(payload){
+  const r=await fetch('/.netlify/functions/analyse',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e?.error||`Server error ${r.status}`);}
+  return await r.json();
+}
+
+// ── Run analysis ──────────────────────────────────────────
+async function runAnalysis(){
+  const home=document.getElementById('homeTeam').value.trim();
+  const away=document.getElementById('awayTeam').value.trim();
+  if(!home||!away){alert('Please enter both team names.');return;}
+  if(!selLeague){alert('League not detected. Tap ⚙ Change to select manually.');return;}
+  lastHome=home;lastAway=away;
+
+  const btn=document.getElementById('runBtn');
+  btn.disabled=true;btn.textContent='ANALYSING...';
+  const R=document.getElementById('results');
+  R.className='show';
+  R.innerHTML=`<div class="load-box"><div class="spinner"></div><div><div class="lstep">RUNNING DEEP ANALYSIS...</div><div class="lsub">Searching live data for ${home} vs ${away} · ${selLeague}</div></div></div>`;
+  R.scrollIntoView({behavior:'smooth',block:'start'});
+
+  const systemPrompt=`You are EBECKS VAR — a professional football match analysis engine.
+TODAY: April 2026
+MANDATORY: Use web_search before reasoning. Use only 2025–2026 data. Do NOT guess. If data is weak → reduce confidence.
+
+SEARCH (in order):
+- "${home} vs ${away} 2026"
+- "${home} last 5 matches 2026"
+- "${away} last 5 matches 2026"
+- "${selLeague} table 2026"
+- "${home} injuries 2026"
+- "${away} injuries 2026"
+- "${home} home form 2026"
+- "${away} away form 2026"
+
+FINAL RULE: Form + Motivation + Context > Team Reputation
+
+Return ONLY raw JSON. No markdown. No backticks. Start with { end with }.
+{
+  "desperate_team":"","desperate_team_role":"home",
+  "storyline_reason":"","motivation_backed_by_form":true,
+  "form_analysis":{
+    "home_last5":"W W D L W","away_last5":"L D L W L",
+    "home_trend":"improving","away_trend":"declining",
+    "home_goals_scored":"8 in last 5","away_goals_scored":"4 in last 5",
+    "home_goals_conceded":"3 in last 5","away_goals_conceded":"7 in last 5"
+  },
+  "predictions":{
+    "match_winner":"Home Win or Away Win or Draw",
+    "confidence":"HIGH or MEDIUM or LOW",
+    "predicted_score":"2-1",
+    "over_under":"Over 2.5 or Under 2.5",
+    "btts":"Yes or No",
+    "best_bet":"plain English best bet",
+    "avoid":"what to avoid and why"
+  },
+  "signal":{
+    "form_strength":{"pass":true,"detail":""},
+    "motivation_edge":{"pass":true,"detail":""},
+    "home_advantage":{"pass":true,"detail":""},
+    "opponent_weakness":{"pass":false,"detail":""},
+    "squad_health":{"pass":true,"detail":""}
+  },
+  "draw_risk":"LOW or HIGH",
+  "verdict":"STRONG or MIXED or WEAK",
+  "summary":"2-3 sentence final verdict"
+}`;
+
+  try{
+    const data=await callBackend({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:2000,
+      system:systemPrompt,
+      messages:[{role:'user',content:`Analyse: ${home} (home) vs ${away} (away) — ${selLeague}. April 2026. Search web for all data first, then return pure JSON only.`}],
+      tools:[{type:'web_search_20250305',name:'web_search'}]
+    });
+
+    if(data.error)throw new Error(data.error);
+    const txt=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    if(!txt)throw new Error('No response. Please try again.');
+    const m=txt.match(/\{[\s\S]*\}/);
+    if(!m)throw new Error('Parse failed. Please try again.');
+    let r;try{r=JSON.parse(m[0]);}catch(e){throw new Error('JSON error. Please try again.');}
+
+    // Safety defaults
+    r.desperate_team=r.desperate_team||home;
+    r.desperate_team_role=r.desperate_team_role||'home';
+    r.storyline_reason=r.storyline_reason||'Analysis complete.';
+    r.motivation_backed_by_form=typeof r.motivation_backed_by_form==='boolean'?r.motivation_backed_by_form:true;
+    r.verdict=['STRONG','MIXED','WEAK'].includes(r.verdict)?r.verdict:'MIXED';
+    r.draw_risk=['LOW','HIGH'].includes(r.draw_risk)?r.draw_risk:'HIGH';
+    r.summary=r.summary||'See breakdown above.';
+    if(!r.form_analysis)r.form_analysis={};
+    const fa=r.form_analysis;
+    fa.home_last5=fa.home_last5||'N/A';fa.away_last5=fa.away_last5||'N/A';
+    fa.home_trend=fa.home_trend||'unstable';fa.away_trend=fa.away_trend||'unstable';
+    fa.home_goals_scored=fa.home_goals_scored||'N/A';fa.away_goals_scored=fa.away_goals_scored||'N/A';
+    fa.home_goals_conceded=fa.home_goals_conceded||'N/A';fa.away_goals_conceded=fa.away_goals_conceded||'N/A';
+    if(!r.predictions)r.predictions={};
+    const pd=r.predictions;
+    pd.match_winner=pd.match_winner||'Draw';
+    pd.confidence=['HIGH','MEDIUM','LOW'].includes(pd.confidence)?pd.confidence:'MEDIUM';
+    pd.predicted_score=pd.predicted_score||'1-1';
+    pd.over_under=['Over 2.5','Under 2.5'].includes(pd.over_under)?pd.over_under:'Under 2.5';
+    pd.btts=['Yes','No'].includes(pd.btts)?pd.btts:'No';
+    pd.best_bet=pd.best_bet||'See verdict.';
+    pd.avoid=pd.avoid||'No specific avoidance noted.';
+    if(!r.signal)r.signal={};
+    ['form_strength','motivation_edge','home_advantage','opponent_weakness','squad_health'].forEach(k=>{
+      if(!r.signal[k]||typeof r.signal[k].pass!=='boolean')r.signal[k]={pass:false,detail:'Data unavailable.'};
+    });
+
+    renderResults(r,home,away);
+  }catch(err){
+    R.innerHTML=`<div class="err-card"><strong>⚠ ERROR</strong>${err.message}<br><br>Check your internet connection and try again.</div>
+    <div class="action-row"><button class="gbtn" onclick="runAnalysis()">↺ RETRY</button></div>`;
+  }
+  btn.disabled=false;btn.textContent='⚽ ANALYSE MATCH';
+}
+
+// ── Render ────────────────────────────────────────────────
+function buildShareText(r,home,away,pd,fa){
+  return `⚽ EBECKS VAR — MATCH ANALYSIS\n${'─'.repeat(30)}\n🏟 ${home} vs ${away}\n🏆 ${selLeague}\n\n📊 ${home}: ${fa.home_last5} (${fa.home_trend})\n📊 ${away}: ${fa.away_last5} (${fa.away_trend})\n\n🎯 SCORE: ${pd.predicted_score}\n🏅 RESULT: ${pd.match_winner} (${pd.confidence})\n⚽ GOALS: ${pd.over_under} · BTTS: ${pd.btts}\n\n✅ BEST BET: ${pd.best_bet}\n⛔ AVOID: ${pd.avoid}\n\n📌 ${r.desperate_team} have more to fight for.\n${r.storyline_reason}\n\n🏆 VERDICT: ${r.verdict} | DRAW RISK: ${r.draw_risk}\n${r.summary}\n\n— Powered by Ebecks VAR`;
+}
+
+function renderResults(r,home,away){
+  const pd=r.predictions,fa=r.form_analysis;
+  const wc=pd.match_winner==='Home Win'?'g':pd.match_winner==='Away Win'?'r':'y';
+  const sL={form_strength:'📊 Form Strength',motivation_edge:'🔥 Motivation Edge',home_advantage:'🏠 Home Advantage',opponent_weakness:'✈️ Opponent Weakness',squad_health:'💪 Squad Health'};
+  const sp=Object.values(r.signal).filter(v=>v&&v.pass).length;
+  const sc=(pd.predicted_score||'1-1').split('-');
+  lastShareText=buildShareText(r,home,away,pd,fa);
+
+  function formBalls(str){
+    if(!str||str==='N/A')return '<span style="color:var(--m);font-size:12px">No data</span>';
+    return str.split(/\s+/).map(c=>{const s=c.replace(/[^WDL]/g,'').toUpperCase();return s?`<div class="fball ${s}">${s}</div>`:''}).join('');
+  }
+
+  let sigH='';
+  for(const[k,v]of Object.entries(r.signal)){
+    if(!v)continue;
+    sigH+=`<div class="sig-card ${v.pass?'pass':'fail'}"><div class="sig-head"><div class="sig-name">${sL[k]||k}</div><div class="sig-badge ${v.pass?'pass':'fail'}">${v.pass?'✓ YES':'✗ NO'}</div></div><div class="sig-detail">${v.detail||''}</div></div>`;
+  }
+
+  const vCl=r.verdict==='STRONG'?'strong':r.verdict==='MIXED'?'mixed':'weak';
+  const url=location.href;
+
+  document.getElementById('results').innerHTML=`
+    <div class="slabel">🏆 Overall Verdict</div>
+    <div class="verdict-hero ${vCl}">
+      <div class="vh-lbl">SIGNAL STRENGTH</div>
+      <div class="vh-sig">${r.verdict}</div>
+      <div class="vh-draw ${r.draw_risk==='LOW'?'low':'high'}">DRAW RISK: ${r.draw_risk}</div>
+      <div class="vh-sum">${r.summary}</div>
+    </div>
+
+    <div class="slabel">🎯 Match Predictions</div>
+    <div class="pred-box">
+      <div class="score-row">
+        <div class="score-team"><div class="score-tname">${home.toUpperCase()}</div><div class="score-num">${sc[0]||'1'}</div></div>
+        <div class="score-dash">–</div>
+        <div class="score-team"><div class="score-tname">${away.toUpperCase()}</div><div class="score-num">${sc[1]||'1'}</div></div>
+      </div>
+      <div class="score-note">PREDICTED SCORELINE</div>
+      <div class="pred-pills">
+        <div class="pred-pill"><div class="pill-lbl">RESULT</div><div class="pill-val ${wc}">${pd.match_winner}</div><div class="pill-conf">${pd.confidence} CONFIDENCE</div></div>
+        <div class="pred-pill"><div class="pill-lbl">GOALS</div><div class="pill-val y">${pd.over_under}</div></div>
+        <div class="pred-pill"><div class="pill-lbl">BTTS</div><div class="pill-val ${pd.btts==='Yes'?'g':'r'}">${pd.btts}</div></div>
+      </div>
+      <div class="best-bet-box"><div class="bbox-lbl g">✅ BEST BET</div><div class="bbox-txt">${pd.best_bet}</div></div>
+      <div class="avoid-box" style="margin-top:8px"><div class="bbox-lbl r">⛔ AVOID</div><div class="bbox-txt">${pd.avoid}</div></div>
+    </div>
+
+    <div class="slabel">📌 Storyline & Motivation</div>
+    <div class="story-card">
+      <div class="story-sub">STORYLINE FAVOURS</div>
+      <div class="story-team">${(r.desperate_team||'').toUpperCase()}</div>
+      <div class="story-txt">${r.storyline_reason||''}</div>
+      <div class="motiv-badge ${r.motivation_backed_by_form?'backed':'notbacked'}">${r.motivation_backed_by_form?'✓ MOTIVATION BACKED BY FORM':'⚠ NOT BACKED BY FORM'}</div>
+    </div>
+
+    <div class="slabel">📊 Form Analysis (Last 5)</div>
+    <div class="form-card">
+      <div class="form-title">RECENT FORM</div>
+      <div class="form-row">
+        <div class="form-team-name">${home.substring(0,7).toUpperCase()}</div>
+        <div class="form-right">
+          <div class="form-results">${formBalls(fa.home_last5)}</div>
+          <div class="form-trend ${fa.home_trend}">${(fa.home_trend||'').toUpperCase()} · ${fa.home_goals_scored} scored · ${fa.home_goals_conceded} conceded</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-team-name">${away.substring(0,7).toUpperCase()}</div>
+        <div class="form-right">
+          <div class="form-results">${formBalls(fa.away_last5)}</div>
+          <div class="form-trend ${fa.away_trend}">${(fa.away_trend||'').toUpperCase()} · ${fa.away_goals_scored} scored · ${fa.away_goals_conceded} conceded</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slabel">📶 Signal Checks (${sp}/5 passed)</div>
+    <div class="sig-grid">${sigH}</div>
+
+    <div class="slabel">📤 Share This Analysis</div>
+    <div class="share-section">
+      <div class="share-title">SEND TO FRIENDS</div>
+      <div class="share-buttons">
+        <button class="sbtn wa" onclick="shareWA()"><svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</button>
+        <button class="sbtn em" onclick="shareEmail()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>Email</button>
+        <button class="sbtn cp" onclick="copyText()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Text</button>
+        ${navigator.share?`<button class="sbtn na" onclick="nativeShare()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>Share</button>`:''}
+      </div>
+      <div class="share-link-row">
+        <div class="share-link-box">${url}</div>
+        <button class="copy-link-btn" onclick="copyLink()">COPY LINK</button>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="gbtn" onclick="resetForm()">← NEW MATCH</button>
+    </div>
+  `;
+}
+
+function shareWA(){window.open('https://wa.me/?text='+encodeURIComponent(lastShareText+'\n\n🔗 '+location.href),'_blank');}
+function shareEmail(){window.location.href='mailto:?subject='+encodeURIComponent(`Ebecks VAR: ${lastHome} vs ${lastAway}`)+'&body='+encodeURIComponent(lastShareText+'\n\n🔗 '+location.href);}
+function copyText(){navigator.clipboard.writeText(lastShareText).then(()=>showToast('✓ COPIED!')).catch(()=>{const t=document.createElement('textarea');t.value=lastShareText;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('✓ COPIED!');});}
+function copyLink(){navigator.clipboard.writeText(location.href).then(()=>showToast('✓ LINK COPIED!')).catch(()=>{const t=document.createElement('textarea');t.value=location.href;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);showToast('✓ LINK COPIED!');});}
+function nativeShare(){if(navigator.share)navigator.share({title:'Ebecks VAR',text:lastShareText,url:location.href}).catch(()=>{});}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function resetForm(){
+  document.getElementById('results').className='';
+  document.getElementById('results').innerHTML='';
+  document.getElementById('homeTeam').value='';
+  document.getElementById('awayTeam').value='';
+  manualMode=false;selLeague='';selOpen=false;lastShareText='';
+  setDet('','');
+  document.getElementById('leagueSel').style.display='none';
+  scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
